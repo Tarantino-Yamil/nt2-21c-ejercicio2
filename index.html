@@ -14,9 +14,15 @@
 
 
 <div class="container-fluid mt-3" id="app">
-    <input type="text" class="form-control" v-model="criterioDeBusqueda"
-        placeholder="Ingresar un criterio de busqueda...">
+    <input id="cb" type="text" class="form-control" v-model="criterioDeBusqueda"
+        placeholder="Ingresar nombre y/o apellido">
     <br>
+    <input id="cb2" type="text" class="form-control" v-model="criterioDeBusqueda2"
+    placeholder="Ingresar numero de DNI">
+    <br>
+    <div id="alert" class="alert alert-danger" role="alert" v-if="cumpleConsigna">
+        Por favor ingrese al menos 3 caracteres
+    </div>
     <div class="card-deck m-0">
         <div class="row">
             <div class="col" v-for="persona in personasFiltradas">
@@ -39,7 +45,9 @@
     new Vue({
         el: '#app',
         data: {
+            cumpleConsigna: true,
             criterioDeBusqueda: '',
+            criterioDeBusqueda2: '',
             //Aquí, en este array es donde tienen que agregar su información
             personas: [
                 {
@@ -168,13 +176,27 @@
                     correo: "ariel.s.feder@gmail.com",
                     dni: "39417573"
                 },
+                {
+                    nombre: "Yamil",
+                    apellido: "Tarantino",
+                    correo: "yamiltarantino@gmail.com",
+                    dni: "43875853"
+                }
             ]
         },
         computed: {
             personasFiltradas() {
                 return this.personas.filter((persona) => {
-                    let registroCompleto = `${persona.nombre} ${persona.apellido} ${persona.dni} ${persona.correo}`
-                    return registroCompleto.toLowerCase().includes(this.criterioDeBusqueda.toLowerCase())
+                    let nombreCompleto = `${persona.nombre} ${persona.apellido}`
+                    let numeroDni = `${persona.dni}`
+                    if(this.criterioDeBusqueda.length >= 3 || this.criterioDeBusqueda2.length >= 3){
+                        this.cumpleConsigna = false;
+                        return nombreCompleto.toLowerCase().includes(this.criterioDeBusqueda.toLowerCase()) 
+                    & numeroDni.includes(this.criterioDeBusqueda2)
+                    } else {
+                        this.cumpleConsigna = true;
+                        return nombreCompleto
+                    }
                 });
             }
         },
@@ -183,5 +205,6 @@
                 return `${persona.nombre} ${persona.apellido}`
             }
         }
+       
     });
 </script>
